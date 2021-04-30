@@ -20,6 +20,9 @@ interface TransactionProviderProps {
 interface TransactionData {
   transactions: Transaction[];
   createTransaction: (transaction: TransactionInput) => Promise<void>;
+  isNewTransactionModalOpen: boolean;
+  handleOpenNewTransactionModal: () => void;
+  handleCloseNewTransactionModal: () => void;
 }
 
 const TransactionsContext = createContext<TransactionData>(
@@ -45,10 +48,27 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     const { transaction } = response.data;
 
     setTransactions([...transactions, transaction])
+
+  }
+
+  const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
+
+  function handleOpenNewTransactionModal() {
+    setIsNewTransactionModalOpen(true);
+  }
+
+  function handleCloseNewTransactionModal() {
+    setIsNewTransactionModalOpen(false);
   }
 
   return (
-    <TransactionsContext.Provider value={{transactions, createTransaction}}>
+    <TransactionsContext.Provider value={{
+      transactions, 
+      createTransaction,
+      isNewTransactionModalOpen,
+      handleCloseNewTransactionModal,
+      handleOpenNewTransactionModal
+      }}>
       { children }
     </TransactionsContext.Provider>
   )

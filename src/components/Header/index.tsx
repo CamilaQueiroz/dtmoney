@@ -1,17 +1,17 @@
 import logoImg from '../../assets/logo.svg';
+import { useTransactions } from '../../hooks/TransactionsContext';
 import { Container, Content } from './styles';
 
-interface HeaderProps {
-  onOpenNewTransacionModal: () => void;
-}
+export function Header() {
 
-export function Header({ onOpenNewTransacionModal }: HeaderProps) {
+  const { handleOpenNewTransactionModal } = useTransactions();
+
   return (
     <Container>
       <Content>
         <img src={logoImg} alt="dt money"/>
 
-        <button type="button" onClick={onOpenNewTransacionModal}>
+        <button type="button" onClick={handleOpenNewTransactionModal}>
           Nova transação
         </button>
       </Content>

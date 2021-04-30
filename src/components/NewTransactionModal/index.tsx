@@ -9,13 +9,14 @@ import closeImage from '../../assets/close.svg';
 
 import { Container, TransactionTypeContainer, RadioBoxButton } from './styles';
 
-interface NewTransactionModalProps {
-  isOpen: boolean;
-  onRequestClose: () => void;
+Modal.setAppElement('body');
+
+type Testing = {
+  isTesting: boolean;
 }
 
-export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
-  const { createTransaction } = useTransactions();
+export function NewTransactionModal({ isTesting }: Testing) {
+  const { createTransaction, isNewTransactionModalOpen, handleCloseNewTransactionModal } = useTransactions();
 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState(0);
@@ -25,30 +26,34 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
   async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
     
-    const transaction = {
-      title,
-      amount,
-      category,
-      type
-    };
-
-    await createTransaction(transaction);
-
-    setTitle('');
-    setAmount(0);
-    setCategory('');
-
-    onRequestClose();
+    try {
+      const transaction = {
+        title,
+        amount,
+        category,
+        type
+      };
+  
+      await createTransaction(transaction);
+  
+      setTitle('');
+      setAmount(0);
+      setCategory('');
+  
+      handleCloseNewTransactionModal();
+    } catch (error) {
+        return error;
+    }
   }
 
   return (
     <Modal 
-        isOpen={isOpen}
-        onRequestClose={onRequestClose}
+        isOpen={isTesting ? true : isNewTransactionModalOpen}
+        onRequestClose={handleCloseNewTransactionModal}
         overlayClassName="react-modal-overlay"
         className="react-modal-content"
       >
-        <button type="button" onClick={onRequestClose} className="react-modal-close">
+        <button type="button" onClick={handleCloseNewTransactionModal} className="react-modal-close">
           <img src={closeImage} alt="Fechar modal"/>
         </button>
         <Container onSubmit={handleCreateNewTransaction}>
@@ -73,6 +78,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
                 onClick={() => setType('deposit')}
                 isActive={type === 'deposit'}
                 activeColor="green"
+                data-testid="button-deposit"
               >
                <img src={incomeImage} alt="Entrada"/>
                <span>Entrada</span>
@@ -84,6 +90,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
                 onClick={() => setType('withdraw')}
                 isActive={type === 'withdraw'}
                 activeColor="red"
+                data-testid="button-withdraw"
               >
                <img src={outcomeImage} alt="Saída"/> 
                <span>Saída</span>  
